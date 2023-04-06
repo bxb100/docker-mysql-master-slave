@@ -1,16 +1,21 @@
-Docker MySQL master-slave replication 
+这个项目是为了 [尚硅谷ShardingSphere5实战教程（快速入门掌握核心）](https://www.bilibili.com/video/BV1ta411g7Jf/?p=14&share_source=copy_web&vd_source=75f28928f8e1001e7e53f0612a1d113d)
+Mysql 主从快速启动, 所以和原始的配置不尽相同, 但是基本的原理是一样的.
+
+Docker MySQL master-slave replication
+
 ========================
 
-MySQL 8.0 master-slave replication with using Docker. 
+MySQL 8.0 master-slave replication with using Docker.
 
-Previous version based on MySQL 5.7 is available in [mysql5.7](https://github.com/vbabak/docker-mysql-master-slave/tree/mysql5.7) branch.
+Previous version based on MySQL 5.7 is available:
+in [mysql5.7](https://github.com/vbabak/docker-mysql-master-slave/tree/mysql5.7) branch.
 
 ## Run
 
-To run this examples you will need to start containers with "docker-compose" 
-and after starting setup replication. See commands inside ./build.sh. 
+To run this examples you will need to start containers with "docker-compose"
+and after starting setup replication. See commands inside ./build.sh.
 
-#### Create 2 MySQL containers with master-slave row-based replication 
+#### Create 2 MySQL containers with master-slave row-based replication
 
 ```bash
 ./build.sh

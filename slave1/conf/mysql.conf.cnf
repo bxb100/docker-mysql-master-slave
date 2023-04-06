@@ -3,5 +3,4 @@
 skip-name-resolve
 default_authentication_plugin = mysql_native_password
 
-server-id = 1
-binlog_format=STATEMENT
+server-id = 2
