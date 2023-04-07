@@ -1,6 +1,20 @@
+container_names = mysql_master mysql_slave1 mysql_slave2
+# wait MySQL container until it's ready for connections
+define func
+.PHONY: $(1)_check_ready
+$(1)_check_ready:
+	@while ! docker-compose logs $(1) | grep -q "ready for connections"; do sleep 1; done
+	@echo "Container $(1) is ready."
+endef
+$(foreach name, $(container_names), $(eval $(call func,$(name))))
+
 .PHONY: down
 down:
 	@docker-compose down -v
+
+.PHONY: stop
+stop:
+	@docker-compose stop
 
 .PHONY: up
 up:
@@ -15,16 +29,9 @@ clean:
 ps:
 	@docker-compose ps
 
-.PHONY: wait_ready
-wait_ready:
-	 @while ! docker-compose logs $$name | grep -q "ready for connections"; do sleep 1; done
-
 .PHONY: ready
 ready:
-	@name=mysql_master ${MAKE} wait_ready
-	@name=mysql_slave1 ${MAKE} wait_ready
-	@name=mysql_slave2 ${MAKE} wait_ready
-	@echo "All containers are ready for containers."
+	@$(foreach name, $(container_names), $(MAKE) $(name)_check_ready;)
 
 .PHONY: build
 build:
@@ -34,24 +41,11 @@ build:
 master_status:
 	@docker exec mysql_master sh -c 'mysql -u root -p123456 -e "SHOW MASTER STATUS \G"'
 
-.PHONY: slave1_status
-slave1_status:
-	@docker exec mysql_slave1 sh -c 'mysql -u root -p123456 -e "SHOW SLAVE STATUS \G"'
+.PHONY: slave1_status slave2_status
+slave1_status slave2_status:
+	$(eval name := $(patsubst %_status,mysql_%,$@))
+	@docker exec $(name) sh -c 'export MYSQL_PWD=123456; mysql -u root -e "SHOW SLAVE STATUS \G"' | sed -n 's/^\(.*\):[[:space:]]\(.\{1,\}\)$$/\1=\2/p'
 
-.PHONY: slave2_status
-slave2_status:
-	@docker exec mysql_slave2 sh -c 'mysql -u root -p123456 -e "SHOW SLAVE STATUS \G"'
-
-.PHONY: master
-master:
-	docker exec -it mysql_master bash
-
-.PHONY: slave1
-slave1:
-	docker exec -it mysql_slave1 bash
-
-.PHONY: slave2
-slave2:
-	docker exec -it mysql_slave2 bash
-
-
+.PHONY: master slave1 slave2
+master slave1 slave2:
+	docker exec -it mysql_$@ bash
