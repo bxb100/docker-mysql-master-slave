@@ -1,4 +1,4 @@
-container_names = mysql_master mysql_slave1 mysql_slave2
+container_names := mysql_master mysql_slave1 mysql_slave2
 # wait MySQL container until it's ready for connections
 define func
 .PHONY: $(1)_check_ready
@@ -37,15 +37,26 @@ ready:
 build:
 	@./build.sh
 
+satus_filter := sed -n 's/^[[:space:]]*\(.*\):[[:space:]]\(.\{1,\}\)$$/\1=\2/p'
 .PHONY: master_status
 master_status:
-	@docker exec mysql_master sh -c 'mysql -u root -p123456 -e "SHOW MASTER STATUS \G"'
+	@docker exec mysql_master sh -c 'export MYSQL_PWD=123456; mysql -u root -e "SHOW MASTER STATUS \G"' | $(satus_filter)
 
 .PHONY: slave1_status slave2_status
 slave1_status slave2_status:
 	$(eval name := $(patsubst %_status,mysql_%,$@))
-	@docker exec $(name) sh -c 'export MYSQL_PWD=123456; mysql -u root -e "SHOW SLAVE STATUS \G"' | sed -n 's/^\(.*\):[[:space:]]\(.\{1,\}\)$$/\1=\2/p'
+	@docker exec $(name) sh -c 'export MYSQL_PWD=123456; mysql -u root -e "SHOW SLAVE STATUS \G"' | $(satus_filter)
 
 .PHONY: master slave1 slave2
 master slave1 slave2:
-	docker exec -it mysql_$@ bash
+	@if [ -n "$(sql)" -a -n "$(db)" ]; then \
+		docker exec -it mysql_$@ sh -c 'export MYSQL_PWD=123456; mysql -u root $(db) -e "$(sql)"'; \
+	else \
+		if [ -n "$(sql)" ]; then \
+			echo "Please specify the database name with db=xx"; \
+		else \
+			echo "Please specify the sql with sql=xx"; \
+		fi; \
+		docker exec -it mysql_$@ bash; \
+	fi
+
