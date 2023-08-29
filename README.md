@@ -93,10 +93,10 @@ make slave1
 ```shell
 make slave2
 ```
-
+<!---
 ---
-
 > 这个项目是为了 [尚硅谷ShardingSphere5实战教程（快速入门掌握核心）](https://www.bilibili.com/video/BV1ta411g7Jf/?p=14&share_source=copy_web&vd_source=75f28928f8e1001e7e53f0612a1d113d)
 Mysql 主从快速启动, 所以和原始的配置不尽相同, 但是基本的原理是一样的.
+-->
 
 [^1]: https://dev.mysql.com/doc/refman/8.0/en/replication-formats.html Not using row for this project
