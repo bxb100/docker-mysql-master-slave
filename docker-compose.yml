@@ -1,7 +1,6 @@
-version: '3'
 services:
     mysql_master:
-        image: mysql:8.0
+        image: mysql:8
         env_file:
             - ./master/mysql_master.env
         container_name: "mysql_master"
@@ -15,7 +14,7 @@ services:
             - overlay
 
     mysql_slave1:
-        image: mysql:8.0
+        image: mysql:8
         env_file:
             - slave1/mysql_slave.env
         container_name: "mysql_slave1"
@@ -30,7 +29,7 @@ services:
         networks:
             - overlay
     mysql_slave2:
-        image: mysql:8.0
+        image: mysql:8
         env_file:
             - slave2/mysql_slave.env
         container_name: "mysql_slave2"

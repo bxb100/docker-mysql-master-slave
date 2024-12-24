@@ -40,12 +40,12 @@ build:
 satus_filter := sed -n 's/^[[:space:]]*\(.*\):[[:space:]]\(.\{1,\}\)$$/\1=\2/p'
 .PHONY: master_status
 master_status:
-	@docker exec mysql_master sh -c 'export MYSQL_PWD=123456; mysql -u root -e "SHOW MASTER STATUS \G"' | $(satus_filter)
+	@docker exec mysql_master sh -c 'export MYSQL_PWD=123456; mysql -u root -e "SHOW BINARY LOG STATUS\G"' | $(satus_filter)
 
 .PHONY: slave1_status slave2_status
 slave1_status slave2_status:
 	$(eval name := $(patsubst %_status,mysql_%,$@))
-	@docker exec $(name) sh -c 'export MYSQL_PWD=123456; mysql -u root -e "SHOW SLAVE STATUS \G"' | $(satus_filter)
+	@docker exec $(name) sh -c 'export MYSQL_PWD=123456; mysql -u root -e "SHOW BINARY LOG STATUS\G"' | $(satus_filter)
 
 .PHONY: master slave1 slave2
 master slave1 slave2:

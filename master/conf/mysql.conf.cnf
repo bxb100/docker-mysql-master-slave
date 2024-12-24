@@ -1,7 +1,9 @@
 [mysqld]
 
 skip-name-resolve
-default_authentication_plugin = mysql_native_password
+# https://stackoverflow.com/questions/78445419/unknown-variable-default-authentication-plugin-mysql-native-password
+# default_authentication_plugin = mysql_native_password
+mysql_native_password=ON
 
 server-id = 1
 binlog_format=STATEMENT
